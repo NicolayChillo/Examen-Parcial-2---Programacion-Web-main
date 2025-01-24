@@ -18,13 +18,13 @@ Los recordatorios automáticos para la devolución de libros se pueden gestionar
 5. Eventos y usabilidad
 Los eventos como onclick o onmouseover mejoran la interacción del usuario:
 
-Eventos de clic: Asignan acciones específicas a botones (por ejemplo, reservar o devolver un libro).
+Eventos de clic: Asignan acciones específicas a botones
 Eventos de mouse: Cambian el estilo al pasar el cursor, mejorando la visualización de elementos interactivos.
 Eventos en inputs: Destacan los campos en los que el usuario escribe, haciendo la experiencia más amigable y accesible.
 
 6. Funciones avanzadas
-Funciones autoejecutables (IIFE): Se utilizan para inicializar el sistema en el momento en que se carga la página, evitando conflictos de nombres en el código.
-Funciones asíncronas (async/await): Son útiles para manejar operaciones que toman tiempo, como simulaciones o interacciones con un servidor. Estas permiten un flujo más lógico y fácil de entender para procesos secuenciales.
+Funciones autoejecutables: Se utilizan para inicializar el sistema en el momento en que se carga la página, evitando conflictos de nombres en el código.
+Funciones asíncronas: Son útiles para manejar operaciones que toman tiempo, como simulaciones o interacciones con un servidor. Estas permiten un flujo más lógico y fácil de entender para procesos secuenciales.
 
 7. Simulación de procesos asíncronos
 Para simular tiempos de espera al reservar o devolver libros, usamos temporizadores y promesas. Esto imita el retraso que ocurriría en una operación real (como una solicitud a un servidor). Las promesas permiten gestionar estos procesos de forma estructurada, proporcionando un flujo claro para manejar éxitos y errores, lo cual es ideal para crear una experiencia de usuario más realista.

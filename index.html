@@ -64,52 +64,24 @@
     <button id="buscar">BUSCAR</button> <button id="reservar">RESERVAR</button>
 
     <script>
-        let librosDisponibles = [
-            { id: 1, titulo: "El Quijote", autor: "Miguel de Cervantes", genero: "Clásico", disponible: true, fechaDevolucion: null },
-            { id: 2, titulo: "Cien años de soledad", autor: "Gabriel García Márquez", genero: "Ficción", disponible: true, fechaDevolucion: null },
-            { id: 3, titulo: "1984", autor: "George Orwell", genero: "Distopía", disponible: true, fechaDevolucion: null }
-        ];
-
-        let librosPrestados = [];
-
         class Libro {
-            constructor(id, titulo, autor, genero) {
+            constructor(id, titulo, autor, genero, disponible = true) {
                 this.id = id;
                 this.titulo = titulo;
                 this.autor = autor;
                 this.genero = genero;
-            }
-
-            recordatorioDevolucion(fechaDevolucion) {
-                let fechaActual = new Date();
-                let fechaDevolucionDate = new Date(fechaDevolucion);
-                let diasFaltantes = Math.ceil((fechaDevolucionDate - fechaActual) / (24 * 60 * 60 * 1000));
-
-                if (diasFaltantes == 0) {
-                    console.log("Hoy es el último día para devolver el libro");
-                } else if (diasFaltantes < 0) {
-                    console.log("El libro está atrasado");
-                } else {
-                    console.log("Faltan " + diasFaltantes + " días para devolver el libro");
-                }
-            }
-
-            confirmacionReserva(estadoReserva) {
-                if (estadoReserva) {
-                    console.log("El libro se reservó con éxito");
-                } else {
-                    console.log("No se pudo reservar el libro");
-                }
-            }
-
-            confirmacionDevolucion(estadoDevolucion) {
-                if (estadoDevolucion) {
-                    console.log("Devolución Exitosa");
-                } else {
-                    console.log("Devolución Fallida");
-                }
+                this.disponible = disponible;
+                this.fechaDevolucion = null;
+                this.interesados = [];
             }
         }
+
+        let librosDisponibles = [
+            new Libro(1, "Libro1", "Autor1", "Clásico"),
+            new Libro(2, "Libro2", "Autor2", "Ficción")
+        ];
+
+        let librosPrestados = [];
 
         function reservarLibro(idLibro) {
             for (let i = 0; i < librosDisponibles.length; i++) {
@@ -126,8 +98,8 @@
         function devolverLibro(idLibro) {
             for (let i = 0; i < librosPrestados.length; i++) {
                 if (librosPrestados[i].id === idLibro) {
-                    librosPrestados[i].disponible = true;
                     librosDisponibles.push(librosPrestados[i]);
+                    librosPrestados[i].disponible = true;
                     librosPrestados.splice(i, 1);
                     console.log(`Libro devuelto: ${librosPrestados[i].titulo}`);
                     return;
@@ -144,6 +116,18 @@
                 }
             }
             return resultados;
+        }
+
+        function agregarRecordatorio(libro) {
+            let fechaDevolucion = new Date();
+            fechaDevolucion.setDate(fechaDevolucion.getDate() + 7);
+            libro.fechaDevolucion = fechaDevolucion;
+
+            let tiempoRestante = fechaDevolucion - new Date();
+
+            setTimeout(() => {
+                alert(`Recordatorio: El libro "${libro.titulo}" debe ser devuelto pronto.`);
+            }, tiempoRestante - 24 * 60 * 60 * 1000);
         }
 
         function mostrarLibros() {
@@ -179,12 +163,54 @@
             event.target.style.backgroundColor = "";
         };
 
-        // Ejemplo de uso de la clase Libro
-        let libro = new Libro(1, "Titulo", "Autor", "Genero");
-        libro.recordatorioDevolucion('2023-12-31');
-        setInterval(() => {
-            libro.recordatorioDevolucion('2023-12-31');
-        }, 24 * 60 * 60 * 1000);
+        document.getElementById("buscar").onclick = function() {
+            let nombreLibro = document.getElementById("nombreLibro").value;
+            let autorLibro = document.getElementById("autorLibro").value;
+            let generoLibro = document.getElementById("generoLibro").value;
+
+            let listaResultados = document.getElementById("librosDisponibles");
+            listaResultados.innerHTML = "";
+
+            for (let i = 0; i < librosDisponibles.length; i++) {
+                let libro = librosDisponibles[i];
+
+                if ((nombreLibro && libro.titulo.toLowerCase().includes(nombreLibro.toLowerCase())) ||
+                    (autorLibro && libro.autor.toLowerCase().includes(autorLibro.toLowerCase())) ||
+                    (generoLibro && libro.genero.toLowerCase().includes(generoLibro.toLowerCase()))) {
+
+                    let li = document.createElement("li");
+                    li.textContent = `${libro.titulo} - ${libro.autor} - ${libro.genero}`;
+                    listaResultados.appendChild(li);
+                }
+            }
+
+            if (listaResultados.innerHTML === "") {
+                let li = document.createElement("li");
+                li.textContent = "No se encontraron resultados.";
+                listaResultados.appendChild(li);
+            }
+        };
+
+        document.getElementById("reservar").onclick = function() {
+            let nombreLibro = document.getElementById("nombreLibro").value;
+
+            if (!nombreLibro) {
+                alert("Por favor, busca un libro primero.");
+                return;
+            }
+
+            for (let i = 0; i < librosDisponibles.length; i++) {
+                let libro = librosDisponibles[i];
+
+                if (libro.titulo.toLowerCase() === nombreLibro.toLowerCase() && libro.disponible) {
+                    reservarLibro(libro.id);
+                    alert(`Libro reservado: ${libro.titulo}`);
+                    return;
+                }
+            }
+
+            alert("El libro no está disponible para reservar.");
+        };
     </script>
 </body>
 </html>
