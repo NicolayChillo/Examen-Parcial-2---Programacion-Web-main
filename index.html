@@ -3,69 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Biblioteca Digital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        li:hover {
+            background-color: #f0f0f0;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <h1>Biblioteca Digital</h1>
+
+    <h2>Libros Disponibles</h2>
+    <ul id="librosDisponibles">
+        <!-- Lista de libros disponibles se mostrará aquí -->
+    </ul>
+
+    <h2>Libros Prestados</h2>
+    <ul id="librosPrestados">
+        <!-- Lista de libros prestados se mostrará aquí -->
+    </ul>
+
+    <button id="mostrar">MOSTRAR TODO</button>
+
+    <h2>Buscar Libro</h2>
+    <p>Puedes buscar un libro en base a su título, autor y género.</p>
+
+    <p>Título:</p>
+    <input type="text" id="nombreLibro">
+    <p>Autor:</p>
+    <input type="text" id="autorLibro">
+    <p>Género:</p>
+    <input type="text" id="generoLibro">
+    <p></p>
+    <button id="buscar">BUSCAR</button> <button id="reservar">RESERVAR</button>
 
     <script>
-        class Fecha {
-            constructor(fecha) {
-            this.fecha = new Date(fecha);
-            }
-        }
+        let librosDisponibles = [
+            { id: 1, titulo: "El Quijote", autor: "Miguel de Cervantes", genero: "Clásico", disponible: true, fechaDevolucion: null },
+            { id: 2, titulo: "Cien años de soledad", autor: "Gabriel García Márquez", genero: "Ficción", disponible: true, fechaDevolucion: null },
+            { id: 3, titulo: "1984", autor: "George Orwell", genero: "Distopía", disponible: true, fechaDevolucion: null }
+        ];
+
+        let librosPrestados = [];
 
         class Libro {
-            constructor(id, titulo, autor, genero, disponibilidad, fechaDevolucion) {
-            this.id = id;
-            this.titulo = titulo;
-            this.autor = autor;
-            this.genero = genero;
-            this.disponibilidad = true;
-            this.fechaDevolucion = null;
+            constructor(id, titulo, autor, genero) {
+                this.id = id;
+                this.titulo = titulo;
+                this.autor = autor;
+                this.genero = genero;
             }
 
-            // Recordatorios de devolución de libros prestados
             recordatorioDevolucion(fechaDevolucion) {
                 let fechaActual = new Date();
                 let fechaDevolucionDate = new Date(fechaDevolucion);
-                let diasFaltantes = Math.ceil((fechaDevolucionDate - fechaActual) / 24 * 60 * 60 * 1000); // 24h * 60min * 60seg * 1000ms
-                // Ocupamos math.ceil por si el libro se devuelve el mismo dia, que hace que el resultado sea 0
+                let diasFaltantes = Math.ceil((fechaDevolucionDate - fechaActual) / (24 * 60 * 60 * 1000));
 
                 if (diasFaltantes == 0) {
-                    console.log("Hoy es el ultimo dia para devolver el libro");
+                    console.log("Hoy es el último día para devolver el libro");
                 } else if (diasFaltantes < 0) {
-                    console.log("El libro esta atrasado");
+                    console.log("El libro está atrasado");
                 } else {
-                    console.log("Faltan " + diasFaltantes + " dias para devolver el libro");
+                    console.log("Faltan " + diasFaltantes + " días para devolver el libro");
                 }
             }
 
-            // Confirmacion de reservas 
             confirmacionReserva(estadoReserva) {
-                if (estadoReserva == true) {
-                    console.log("El libro se reservo con exito");
+                if (estadoReserva) {
+                    console.log("El libro se reservó con éxito");
                 } else {
                     console.log("No se pudo reservar el libro");
                 }
             }
 
-            // Confirmacion de devoluciones exitosas
             confirmacionDevolucion(estadoDevolucion) {
-                if (estadoDevolucion == true) {
-                    console.log("Devolucion Exitosa");
+                if (estadoDevolucion) {
+                    console.log("Devolución Exitosa");
                 } else {
-                    console.log("Devolucion Fallida");
+                    console.log("Devolución Fallida");
                 }
             }
         }
 
+        function reservarLibro(idLibro) {
+            for (let i = 0; i < librosDisponibles.length; i++) {
+                if (librosDisponibles[i].id === idLibro && librosDisponibles[i].disponible) {
+                    librosPrestados.push(librosDisponibles[i]);
+                    librosDisponibles[i].disponible = false;
+                    console.log(`Libro reservado: ${librosDisponibles[i].titulo}`);
+                    return;
+                }
+            }
+            console.log("El libro no está disponible.");
+        }
+
+        function devolverLibro(idLibro) {
+            for (let i = 0; i < librosPrestados.length; i++) {
+                if (librosPrestados[i].id === idLibro) {
+                    librosPrestados[i].disponible = true;
+                    librosDisponibles.push(librosPrestados[i]);
+                    librosPrestados.splice(i, 1);
+                    console.log(`Libro devuelto: ${librosPrestados[i].titulo}`);
+                    return;
+                }
+            }
+            console.log("El libro no estaba prestado.");
+        }
+
+        function buscarLibros(busqueda, criterio) {
+            let resultados = [];
+            for (let i = 0; i < librosDisponibles.length; i++) {
+                if (librosDisponibles[i][criterio].toLowerCase().includes(busqueda.toLowerCase())) {
+                    resultados.push(librosDisponibles[i]);
+                }
+            }
+            return resultados;
+        }
+
+        function mostrarLibros() {
+            let listaDisponibles = document.getElementById("librosDisponibles");
+            listaDisponibles.innerHTML = "";
+            for (let i = 0; i < librosDisponibles.length; i++) {
+                let li = document.createElement("li");
+                li.textContent = `${librosDisponibles[i].titulo} - ${librosDisponibles[i].autor}`;
+                listaDisponibles.appendChild(li);
+            }
+        }
+
+        function mostrarLibrosPrestados() {
+            let listaPrestados = document.getElementById("librosPrestados");
+            listaPrestados.innerHTML = "";
+            for (let i = 0; i < librosPrestados.length; i++) {
+                let li = document.createElement("li");
+                li.textContent = `${librosPrestados[i].titulo} - ${librosPrestados[i].autor}`;
+                listaPrestados.appendChild(li);
+            }
+        }
+
+        document.getElementById("mostrar").onclick = function() {
+            mostrarLibros();
+            mostrarLibrosPrestados();
+        };
+
+        document.getElementById("librosDisponibles").onmouseover = function(event) {
+            event.target.style.backgroundColor = "#f0f0f0";
+        };
+
+        document.getElementById("librosDisponibles").onmouseout = function(event) {
+            event.target.style.backgroundColor = "";
+        };
+
         // Ejemplo de uso de la clase Libro
         let libro = new Libro(1, "Titulo", "Autor", "Genero");
-            libro.recordatorioDevolucion('2023-12-31');
+        libro.recordatorioDevolucion('2023-12-31');
         setInterval(() => {
             libro.recordatorioDevolucion('2023-12-31');
-        }, 24 * 60 * 60 * 1000); // 24h * 60min * 60seg * 1000ms
-
+        }, 24 * 60 * 60 * 1000);
     </script>
 </body>
 </html>
