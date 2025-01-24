@@ -4,9 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <h1>sads</h1>
 </head>
 <body>
-    
+
+    <script>
+        class Fecha {
+            constructor(fecha) {
+            this.fecha = new Date(fecha);
+            }
+        }
+
+        class Libro {
+            constructor(id, titulo, autor, genero, disponibilidad, fechaDevolucion) {
+            this.id = id;
+            this.titulo = titulo;
+            this.autor = autor;
+            this.genero = genero;
+            this.disponibilidad = true;
+            this.fechaDevolucion = null;
+            }
+
+            // Recordatorios de devolución de libros prestados
+            recordatorioDevolucion(fechaDevolucion) {
+                let fechaActual = new Date();
+                let fechaDevolucionDate = new Date(fechaDevolucion);
+                let diasFaltantes = Math.ceil((fechaDevolucionDate - fechaActual) / 24 * 60 * 60 * 1000); // 24h * 60min * 60seg * 1000ms
+                // Ocupamos math.ceil por si el libro se devuelve el mismo dia, que hace que el resultado sea 0
+
+                if (diasFaltantes == 0) {
+                    console.log("Hoy es el ultimo dia para devolver el libro");
+                } else if (diasFaltantes < 0) {
+                    console.log("El libro esta atrasado");
+                } else {
+                    console.log("Faltan " + diasFaltantes + " dias para devolver el libro");
+                }
+            }
+
+            // Confirmacion de reservas 
+            confirmacionReserva(estadoReserva) {
+                if (estadoReserva == true) {
+                    console.log("El libro se reservo con exito");
+                } else {
+                    console.log("No se pudo reservar el libro");
+                }
+            }
+
+            // Confirmacion de devoluciones exitosas
+            confirmacionDevolucion(estadoDevolucion) {
+                if (estadoDevolucion == true) {
+                    console.log("Devolucion Exitosa");
+                } else {
+                    console.log("Devolucion Fallida");
+                }
+            }
+        }
+
+        // Ejemplo de uso de la clase Libro
+        let libro = new Libro(1, "Titulo", "Autor", "Genero");
+            libro.recordatorioDevolucion('2023-12-31');
+        setInterval(() => {
+            libro.recordatorioDevolucion('2023-12-31');
+        }, 24 * 60 * 60 * 1000); // 24h * 60min * 60seg * 1000ms
+
+    </script>
 </body>
 </html>
